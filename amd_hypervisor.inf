@@ -1,0 +1,49 @@
+; AMD-V Blue-Pill Hypervisor Driver INF
+; For test-signing: bcdedit /set testsigning on
+; Sign: signtool sign /fd sha256 /a amd_hypervisor.sys
+
+[Version]
+Signature   = "$WINDOWS NT$"
+Class       = System
+ClassGuid   = {4D36E97D-E325-11CE-BFC1-08002BE10318}
+Provider    = %ManufacturerName%
+DriverVer   = 10/21/2026,1.0.0.0
+CatalogFile = amd_hypervisor.cat
+
+[DestinationDirs]
+DefaultDestDir = 12   ; %windir%\System32\drivers
+
+[SourceDisksNames]
+1 = %DiskName%,,,""
+
+[SourceDisksFiles]
+amd_hypervisor.sys = 1,,
+
+[Manufacturer]
+%ManufacturerName% = Standard,NTamd64
+
+[Standard.NTamd64]
+%DeviceDescription% = Driver_Install
+
+[Driver_Install.NT]
+CopyFiles = Drivers_Dir
+
+[Drivers_Dir]
+amd_hypervisor.sys
+
+[Driver_Install.NT.Services]
+AddService = amd_hypervisor,,Driver_Service_Inst
+
+[Driver_Service_Inst]
+DisplayName    = %ServiceDescription%
+ServiceType    = 1              ; SERVICE_KERNEL_DRIVER
+StartType      = 3              ; SERVICE_DEMAND_START
+ErrorControl   = 1              ; SERVICE_ERROR_NORMAL
+ServiceBinary  = %12%\amd_hypervisor.sys
+LoadOrderGroup = "Boot Bus Extender"
+
+[Strings]
+ManufacturerName   = "HV"
+DiskName           = "AMD Hypervisor Disk"
+DeviceDescription  = "AMD-V Hypervisor"
+ServiceDescription = "AMD-V Blue-Pill Hypervisor"
